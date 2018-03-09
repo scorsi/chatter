@@ -26,7 +26,6 @@ let message = $('#msg');
 let name = $('#name');
 
 message.on('keypress', event => {
-    console.log(event);
     if (event.keyCode == 13) {
         channel.push('shout', {
             name: name.val(),
