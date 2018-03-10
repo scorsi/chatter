@@ -41,12 +41,12 @@ defmodule ChatterWeb.Router do
   scope "/", ChatterWeb do
     pipe_through :browser
     
+    get "/", PageController, :index
   end
   
   scope "/", ChatterWeb do
     pipe_through :protected
 
-    get "/", PageController, :index
   end
 
   defp put_user_token(conn, _) do
