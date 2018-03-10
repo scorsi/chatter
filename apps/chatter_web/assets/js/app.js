@@ -1,5 +1,5 @@
 import "phoenix_html"
-import Vue from 'vue'
+import Vue from "vue"
 import App from "../components/app.vue"
 
 Vue.component("app", App)

@@ -2,15 +2,17 @@
   <div class="my-app">
     <h1>Chatter</h1>
 
-    <div class="user-details">
-      <label>Please enter your name:</label><br>
-      <input type="text" v-model="username">
-      <button v-on:click="connectToLobby">Next</button>
-    </div>
+    Online users:
+    <ul v-for="user in users">
+      <li>
+        {{user.user}} ({{user.online_at}})
+      </li>
+    </ul>
 
+    Messages:
     <ul v-for="message in messages">
       <li>
-        <small>{{message.received_at}}</small>: <strong>{{message.username}}</strong> {{message.body}}
+        <small>{{message.received_at}}</small> <strong>{{message.username}}</strong>: {{message.body}}
       </li>
     </ul>
 
@@ -19,15 +21,41 @@
 </template>
 
 <script>
-import { Socket, Presence } from "phoenix"
+import socket from "../js/socket"
+import { Presence } from "phoenix"
 
 export default {
   data() {
+    
+    let messages = []
+    let users = []
+    let presences = {}
+
+    let channel = socket.channel("room:lobby", {})
+
+    channel.on("message:new", payload => {
+      payload.received_at = Date();
+      messages.push(payload);
+    })
+
+    channel.on("presence_state", state => {
+      presences = Presence.syncState(presences, state)
+      this.assignUsers(presences)
+    })
+    channel.on("presence_diff", diff => {
+       presences = Presence.syncDiff(presences, diff)
+      this.assignUsers(presences)
+    })
+
+    channel.join()
+      .receive("ok", resp => { console.log("Joined successfully", resp) })
+      .receive("error", resp => { console.log("Unable to join", resp) })
+
+
     return {
-      socket: null,
-      channel: null,
-      messages: [],
-      username: "",
+      channel: channel,
+      messages: messages,
+      users: users,
       message: ""
     }
   },
@@ -38,26 +66,17 @@ export default {
       })
       this.message = ""
     },
-    
-    connectToLobby() {
-      this.socket = new Socket("/socket", {
-        params: {
-          // token: window.userToken,
-          username: this.username
-        }
+
+    assignUsers(presences) {
+      let formatTimestamp = (timestamp) => {
+        timestamp = parseInt(timestamp)
+        let date = new Date(timestamp)
+        return date.toLocaleTimeString()
+      }
+
+      this.users = Presence.list(presences, (user, {metas: metas}) => {
+        return { user: user, online_at: formatTimestamp(metas[0].online_at) }
       })
-      this.socket.connect()
-
-      this.channel = this.socket.channel("room:lobby", {})
-
-      this.channel.on("message:new", payload => {
-        payload.received_at = Date();
-        this.messages.push(payload);
-      })
-
-      this.channel.join()
-        .receive("ok", resp => { console.log("Joined successfully", resp) })
-        .receive("error", resp => { console.log("Unable to join", resp) })
     }
   }
 }

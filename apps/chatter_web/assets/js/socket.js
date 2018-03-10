@@ -1,14 +1,10 @@
 import { Socket, Presence } from "phoenix"
-import Vue from 'vue'
-import App from "../components/app.vue"
 
-Vue.component("app", App)
-
-new Vue({
-    el: "#app",
-    render(createElement) {
-        return createElement(App, {})
+const socket = new Socket("/socket", {
+    params: {
+        token: window.userToken
     }
 })
+socket.connect();
 
 export default socket
