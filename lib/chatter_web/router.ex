@@ -18,4 +18,10 @@ defmodule ChatterWeb.Router do
 
     get "/", PageController, :index
   end
+
+  scope "/api", ChatterWeb do
+    pipe_through :api
+
+    resources "/messages", MessageController
+  end
 end

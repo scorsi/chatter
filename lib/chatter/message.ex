@@ -2,10 +2,10 @@ defmodule Chatter.Message do
   use Ecto.Schema
   import Ecto.Changeset
 
-
+  
   schema "messages" do
-    field :message, :string
     field :name, :string
+    field :message, :string
 
     timestamps()
   end
@@ -18,5 +18,13 @@ defmodule Chatter.Message do
 
   def get_msgs(limit \\ 20) do
     Chatter.Repo.all(Chatter.Message, limit: limit)
+  end
+end
+
+defimpl Poison.Encoder, for: Chatter.Message do
+  def encode(model, opts) do
+    model
+    |> Map.take([:name, :message])
+    |> Poison.Encoder.encode(opts)
   end
 end
