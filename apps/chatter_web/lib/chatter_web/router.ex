@@ -19,6 +19,7 @@ defmodule ChatterWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug Coherence.Authentication.Session, protected: true
+    plug :put_user_token
   end
 
   pipeline :api do
@@ -46,5 +47,12 @@ defmodule ChatterWeb.Router do
     pipe_through :protected
 
     get "/", PageController, :index
+  end
+
+  defp put_user_token(conn, _) do
+    current_user = Coherence.current_user(conn).id
+    user_id_token = Phoenix.Token.sign(conn, "user_id", Coherence.current_user(conn).id)
+    conn
+    |> assign(:user_id, user_id_token)
   end
 end
