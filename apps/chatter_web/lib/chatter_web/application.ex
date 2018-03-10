@@ -6,6 +6,7 @@ defmodule ChatterWeb.Application do
 
     children = [
       supervisor(ChatterWeb.Endpoint, []),
+      supervisor(ChatterWeb.Presence, []),
     ]
 
     opts = [strategy: :one_for_one, name: ChatterWeb.Supervisor]
