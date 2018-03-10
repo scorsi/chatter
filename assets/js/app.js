@@ -4,10 +4,6 @@ import socket from "./socket"
 import $ from "jquery"
 
 
-const elmContainer = $('#elm-container')
-const elmApp = Elm.Main.embed(elmContainer[0])
-
-
 const channel = socket.channel('chat_room:lobby', {})
 const list = $('#message-list')
 const message = $('#msg')
@@ -38,3 +34,7 @@ channel
     .receive('error', resp => {
         console.log('Unable to join', resp)
     })
+
+
+const container = $('main')
+const app = Elm.Main.embed(container[0])
