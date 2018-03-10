@@ -5,8 +5,7 @@ import $ from "jquery"
 
 
 const elmContainer = $('#elm-container')
-const app = Elm.Main.embed(elmContainer)
-
+const elmApp = Elm.Main.embed(elmContainer[0])
 
 
 const channel = socket.channel('chat_room:lobby', {})
