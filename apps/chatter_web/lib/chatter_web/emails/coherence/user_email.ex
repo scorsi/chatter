@@ -1,7 +1,6 @@
 Code.ensure_loaded Phoenix.Swoosh
 
 defmodule ChatterWeb.Coherence.UserEmail do
-  @moduledoc false
   use Phoenix.Swoosh, view: ChatterWeb.Coherence.EmailView, layout: {ChatterWeb.Coherence.LayoutView, :email}
   alias Swoosh.Email
   require Logger

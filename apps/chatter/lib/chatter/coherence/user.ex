@@ -1,5 +1,4 @@
 defmodule Chatter.Coherence.User do
-  @moduledoc false
   use Ecto.Schema
   use Coherence.Schema
 

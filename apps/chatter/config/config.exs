@@ -4,7 +4,7 @@ config :chatter, ecto_repos: [Chatter.Repo]
 
 import_config "#{Mix.env}.exs"
 
-# %% Coherence Configuration %%   Don't remove this line
+# %% Coherence Configuration %%
 config :coherence,
   user_schema: Chatter.Coherence.User,
   repo: Chatter.Repo,

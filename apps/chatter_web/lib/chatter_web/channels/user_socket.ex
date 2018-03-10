@@ -1,10 +1,8 @@
 defmodule ChatterWeb.UserSocket do
   use Phoenix.Socket
 
-  ## Channels
   channel "room:*", ChatterWeb.RoomChannel
 
-  ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
 
   def connect(%{"token" => user_id_token}, socket) do
