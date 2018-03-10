@@ -43,7 +43,7 @@ export default {
       this.assignUsers(presences)
     })
     channel.on("presence_diff", diff => {
-       presences = Presence.syncDiff(presences, diff)
+      presences = Presence.syncDiff(presences, diff)
       this.assignUsers(presences)
     })
 
