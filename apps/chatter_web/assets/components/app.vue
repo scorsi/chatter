@@ -1,9 +1,16 @@
 <template>
   <div class="my-app">
     <h1>Chatter</h1>
+
+    <div class="user-details">
+      <label>Please enter your name:</label><br>
+      <input type="text" v-model="username">
+      <button v-on:click="connectToLobby">Next</button>
+    </div>
+
     <ul v-for="message in messages">
       <li>
-        <small>{{message.received_at}}</small>: {{message.body}}
+        <small>{{message.received_at}}</small>: <strong>{{message.username}}</strong> {{message.body}}
       </li>
     </ul>
 
@@ -12,23 +19,45 @@
 </template>
 
 <script>
+import { Socket, Presence } from "phoenix"
+
 export default {
   data() {
     return {
+      socket: null,
+      channel: null,
+      messages: [],
+      username: "",
       message: ""
-    }
-  },
-  computed: {
-    messages() {
-      return this.$parent.messages
     }
   },
   methods: {
     sendMessage() {
-      this.$parent.channel.push("message:new", {
+      this.channel.push("message:new", {
         body: this.message
       })
       this.message = ""
+    },
+    
+    connectToLobby() {
+      this.socket = new Socket("/socket", {
+        params: {
+          // token: window.userToken,
+          username: this.username
+        }
+      })
+      this.socket.connect()
+
+      this.channel = this.socket.channel("room:lobby", {})
+
+      this.channel.on("message:new", payload => {
+        payload.received_at = Date();
+        this.messages.push(payload);
+      })
+
+      this.channel.join()
+        .receive("ok", resp => { console.log("Joined successfully", resp) })
+        .receive("error", resp => { console.log("Unable to join", resp) })
     }
   }
 }

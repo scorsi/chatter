@@ -14,9 +14,14 @@ defmodule ChatterWeb.UserSocket do
   #   end
   # end
   
-  def connect(_params, socket) do
+  def connect(%{"username" => username}, socket) do
+    socket = assign(socket, :username, username)
     {:ok, socket}
   end
+
+  # def connect(_params, socket) do
+  #   {:ok, socket}
+  # end
 
   def id(_socket), do: nil
 end

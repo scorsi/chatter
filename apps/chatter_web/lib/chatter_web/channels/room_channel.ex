@@ -16,7 +16,8 @@ defmodule ChatterWeb.RoomChannel do
     # user = Chatter.Coherence.Schemas.get_user(socket.assigns.user_id)
     broadcast!(socket, "message:new", %{
       # user: user.name, 
-      body: body
+      body: body,
+      username: socket.assigns.username
     })
     {:noreply, socket}
   end
