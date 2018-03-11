@@ -35,6 +35,8 @@ defmodule ChatterWeb.Endpoint do
     key: "_chatter_key",
     signing_salt: "v/+ea71U"
 
+  plug CORSPlug
+
   plug ChatterWeb.Router
 
   @doc """

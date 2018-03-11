@@ -45,7 +45,8 @@ defmodule Chatter.Mixfile do
       {:absinthe_ecto, "~> 0.1.3"},
       {:comeonin, "~> 4.1"},
       {:bcrypt_elixir, "~> 1.0"},
-      {:guardian, "~> 1.0"}
+      {:guardian, "~> 1.0"},
+      {:cors_plug, "~> 1.5"}
     ]
   end
 
