@@ -46,7 +46,7 @@ defmodule Chatter.UserResolver do
             {:ok, token, _} <- Chatter.Guardian.encode_and_sign(user),
             {:ok, _} <- Chatter.Accounts.store_user(user, token)
         do
-            {:ok, %{token: token}}
+            {:ok, %{id: user.id, token: token}}
         end
     end
 
@@ -56,7 +56,7 @@ defmodule Chatter.UserResolver do
             true ->
                 token = info.context.token
                 Chatter.Guardian.revoke(token)
-                {:ok, %{token: token}}
+                {:ok, %{id: info.context.current_user.id, token: token}}
         end
     end
 end

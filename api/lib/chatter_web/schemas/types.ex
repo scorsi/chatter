@@ -9,6 +9,7 @@ defmodule ChatterWeb.Schema.Types do
     end
 
     object :session do
+        field :id, :id
         field :token, :string
     end
 end
