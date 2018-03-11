@@ -1,22 +1,43 @@
 <template>
   <div class="my-app">
-    <h1>Chatter</h1>
+    <div class="row" id="main-container" v-if="this.loaded == false">
 
-    Online users:
-    <ul v-for="user in users">
-      <li>
-        {{user.user}} ({{user.online_at}})
-      </li>
-    </ul>
+      <div class="col s6 offset-s3 valign-wrapper progress">
+          <div class="indeterminate"></div>
+      </div>
+      
+    </div>
+    <div class="row" id="main-container" v-else>
 
-    Messages:
-    <ul v-for="message in messages">
-      <li>
-        <small>{{message.received_at}}</small> <strong>{{message.username}}</strong>: {{message.body}}
-      </li>
-    </ul>
+      <div class="col s3" id="users-list">
+        <h3>Online</h3>
+        <ul>
+          <transition-group name="user-appear">
+            <li v-for="user in users" v-bind:key="user.user">
+              {{user.user}} ({{user.online_at}})
+            </li>
+          </transition-group>
+        </ul>
+      </div>
+      <div class="col s9" id="messages-list">
+        <ul>
+          <transition-group name="message-appear">
+            <li v-for="message in messages" v-bind:key="message">
+              <div class="message-metadata">
+                <span class="username">{{message.username}}</span>
+                <span class="received-at">{{message.received_at}}</span>
+              </div>
 
-    <input type="text" v-model="message" v-on:keyup.13="sendMessage">
+              {{message.body}}
+            </li>
+          </transition-group>
+        </ul>
+        <div id="your-message" class="input-field center-align">
+          <input type="text" placeholder="Message..." v-model="message" v-on:keyup.13="sendMessage">
+        </div>
+      </div>
+      
+    </div>
   </div>
 </template>
 
@@ -26,17 +47,15 @@ import { Presence } from "phoenix"
 
 export default {
   data() {
-    
-    let messages = []
-    let users = []
-    let presences = {}
 
     let channel = socket.channel("room:lobby", {})
 
     channel.on("message:new", payload => {
       payload.received_at = Date();
-      messages.push(payload);
+      this.messages.push(payload);
     })
+
+    let presences = {}
 
     channel.on("presence_state", state => {
       presences = Presence.syncState(presences, state)
@@ -48,14 +67,18 @@ export default {
     })
 
     channel.join()
-      .receive("ok", resp => { console.log("Joined successfully", resp) })
-      .receive("error", resp => { console.log("Unable to join", resp) })
+      .receive("ok", resp => {
+        this.loaded = true
+      })
+      .receive("error", resp => {
+      })
 
 
     return {
+      loaded: false,
       channel: channel,
-      messages: messages,
-      users: users,
+      messages: [],
+      users: [],
       message: ""
     }
   },
@@ -84,12 +107,69 @@ export default {
 
 <style lang="sass">
 .my-app {
-  margin-left: auto;
-  margin-right: auto;
-  width: 800px;
-
   h1 {
     text-align: center;
+  }
+  #main-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    overflow: hidden;
+  }
+  #users-list {
+    overflow-y: scroll;
+    ul {
+      padding-left: 20px;
+      li {
+        &.user-appear-enter-active, &.user-appear-leave-active {
+          transition: all .2s
+        }
+        &.user-appear-enter, &.user-appear-leave-active {
+          opacity: 0;
+          transform: translateX(-15px);
+        }
+      }
+    }
+  }
+  #messages-list {
+    padding-top: 20px;
+    padding-left: 20px;
+    overflow-y: scroll;
+    flex: 1;
+    ul {
+      padding: 0;
+      li {
+        padding: 5px 0;
+        &.message-appear-enter-active, &.message-appear-leave-active {
+          transition: all .2s
+        }
+        &.message-appear-enter, &.message-appear-leave-active {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        .message-metadata {
+          .username {
+            font-weight: bold;
+          }
+          .received-at {
+            margin-left: 5px;
+            font-size: 0.9em;
+          }
+        }
+      }
+    }
+  }
+  #your-message {
+    padding: 15px;
+    input {
+      width: 100%;
+      padding: 5px 8px;
+      border-radius: 3px;
+      outline: 0;
+    }
   }
 }
 </style>
