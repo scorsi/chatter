@@ -1,0 +1,2 @@
+defmodule Chatter do
+end
