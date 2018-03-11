@@ -5,7 +5,7 @@ defmodule ChatterWeb.Schema do
     input_object :update_user_params do
         field :name, non_null(:string)
         field :email, non_null(:string)
-        field :password, non_null(:string)
+        field :password, :string
     end
 
     query do

@@ -17,6 +17,11 @@ config :chatter, ChatterWeb.Endpoint,
   pubsub: [name: Chatter.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+# Configures Guardian
+config :chatter, Chatter.Guardian,
+  issuer: "chatter",
+  secret_key: "Tx5q2KUmvjseR14CEOoKUzsfq9/I4fVMwAPYWphXOj34k87kuKnfX6fcF6IOGAbN"
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
