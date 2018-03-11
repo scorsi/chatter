@@ -1,25 +1,28 @@
 <template lang="jade">
 
 v-app
-  v-navigation-drawer(app v-model="sideNav")
+  v-navigation-drawer(app temporary v-model="sideNav")
     v-list
-      v-list-tile
+      v-list-tile(v-for="item in menuItems" v-bind:key="item.title" router :to="item.link")
         v-list-tile-action
-          v-icon supervisor_account
-        v-list-tile-content View meetups
+          v-icon {{ item.icon }}
+        v-list-tile-content {{ item.title }}
 
-  v-toolbar(app).primary
+  v-toolbar(app)
     v-toolbar-side-icon(@click.native.stop="sideNav = !sideNav").hidden-sm-and-up
-    v-toolbar-title Chatter
+    v-toolbar-title
+      router-link(to="/" tag="span" style="cursor: pointer") Chatter
     v-spacer
     v-toolbar-items.hidden-xs-only
-      v-btn(flat) Login
-
+      v-btn(flat v-for="item in menuItems" v-bind:key="item.title" router :to="item.link")
+        v-icon(left) {{ item.icon }}
+        {{ item.title }}
+  
   v-content
-    v-container(fluid)
-      p Hello
+    router-view
 
   v-footer(app)
+    p Footer
 
 </template>
 
@@ -27,7 +30,14 @@ v-app
 export default {
   data () {
     return {
-      sideNav: false
+      sideNav: false,
+      menuItems: [
+        { icon: 'supervisor_account', title: 'View meetups', link: '/meetups' },
+        { icon: 'room', title: 'Organize meetups', link: '/meetup/new' },
+        { icon: 'person', title: 'Profil', link: '/profile' },
+        { icon: 'face', title: 'Sign up', link: '/signup' },
+        { icon: 'lock_open', title: 'Sign in', link: '/signin' }
+      ]
     }
   },
   name: 'App'
