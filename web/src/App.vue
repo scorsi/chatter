@@ -16,7 +16,7 @@ v-app
     v-toolbar-items.hidden-xs-only
       v-btn(flat v-for="item in menuItems" v-bind:key="item.title" router :to="item.link")
         v-icon(left) {{ item.icon }}
-        {{ item.title }}
+        span {{ item.title }}
   
   v-content
     router-view
