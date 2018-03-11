@@ -1,2 +1,3 @@
-./.vscode/
-./api/.elixir_ls/
+# VSCode specific
+.vscode/
+api/.elixir_ls/
