@@ -5,9 +5,13 @@ defmodule ChatterWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", ChatterWeb do
+  scope "/", ChatterWeb do
     pipe_through :api
 
     resources "/users", UserController, except: [:new, :edit]
   end
+
+  forward "/api", Absinthe.Plug, schema: ChatterWeb.Schema
+
+  forward "/graphiql", Absinthe.Plug.GraphiQL, schema: ChatterWeb.Schema
 end
