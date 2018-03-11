@@ -13,20 +13,50 @@ defmodule Chatter.UserResolver do
     end
 
     def create(args, _info) do
-        Accounts.create_user(args)
+        case Accounts.create_user(args) do
+            {:ok, user} -> {:ok, user}
+            {:error, changeset} -> {:error, ChatterWeb.EctoHelper.pretty_errors(changeset.errors)}
+        end
     end
 
     def update(%{id: id, user: params}, _info) do
         case Accounts.get_user(id) do
             nil -> {:error, "User id #{id} not found"}
-            user -> Accounts.update_user(user, params)
+            user -> 
+                case Accounts.update_user(user, params) do
+                    {:ok, user} -> {:ok, user}
+                    {:error, changeset} -> {:error, ChatterWeb.EctoHelper.pretty_errors(changeset.errors)}
+                end
         end
     end
 
     def delete(%{id: id}, _info) do
         case Accounts.get_user(id) do
             nil -> {:error, "User id #{id} not found"}
-            user -> Accounts.delete_user(user)
+            user ->
+                case Accounts.delete_user(user) do
+                    {:ok, user} -> {:ok, user}
+                    {:error, changeset} -> {:error, ChatterWeb.EctoHelper.pretty_errors(changeset.errors)}
+                end
+        end
+    end
+
+    def login(params, _info) do
+        with {:ok, user} <- Chatter.Accounts.User.authenticate(params),
+            {:ok, token, _} <- Chatter.Guardian.encode_and_sign(user),
+            {:ok, _} <- Chatter.Accounts.store_user(user, token)
+        do
+            {:ok, %{token: token}}
+        end
+    end
+
+    def logout(_params, info) do
+        case Map.has_key?(info.context, :token) do
+            false -> {:error, "Not logged in"}
+            true ->
+                token = info.context.token
+                Chatter.Guardian.revoke(token)
+                {:ok, %{token: token}}
         end
     end
 end

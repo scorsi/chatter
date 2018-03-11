@@ -3,6 +3,12 @@ defmodule ChatterWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    # plug Guardian.Plug.VerifyHeader, realm: "Bearer"
+    # plug Guardian.Plug.LoadResource
+  end
+
+  pipeline :graphql do
+    plug ChatterWeb.Context
   end
 
   scope "/", ChatterWeb do
@@ -11,7 +17,11 @@ defmodule ChatterWeb.Router do
     resources "/users", UserController, except: [:new, :edit]
   end
 
-  forward "/api", Absinthe.Plug, schema: ChatterWeb.Schema
+  scope "/api" do
+    pipe_through :graphql
+
+    forward "/", Absinthe.Plug, schema: ChatterWeb.Schema
+  end
 
   forward "/graphiql", Absinthe.Plug.GraphiQL, schema: ChatterWeb.Schema
 end

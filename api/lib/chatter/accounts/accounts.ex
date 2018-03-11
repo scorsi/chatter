@@ -72,6 +72,15 @@ defmodule Chatter.Accounts do
   end
 
   @doc """
+  Store the token to the given user.
+  """
+  def store_user(%User{} = user, token) do
+    user
+    |> User.store_token_changeset(%{token: token})
+    |> Repo.update()
+  end
+
+  @doc """
   Updates a user.
 
   ## Examples
@@ -85,7 +94,7 @@ defmodule Chatter.Accounts do
   """
   def update_user(%User{} = user, attrs) do
     user
-    |> User.update_changeset(attrs)
+    |> User.changeset(attrs)
     |> Repo.update()
   end
 

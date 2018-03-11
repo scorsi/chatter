@@ -3,7 +3,7 @@ defmodule ChatterWeb.Schema do
     import_types ChatterWeb.Schema.Types
 
     input_object :update_user_params do
-        field :name, non_null(:string)
+        field :username, non_null(:string)
         field :email, non_null(:string)
         field :password, :string
     end
@@ -20,8 +20,18 @@ defmodule ChatterWeb.Schema do
     end
 
     mutation do
+        field :login, type: :session do
+            arg :email, non_null(:string)
+            arg :password, non_null(:string)
+            resolve &Chatter.UserResolver.login/2
+        end
+
+        field :logout, type: :session do
+            resolve &Chatter.UserResolver.logout/2
+        end
+
         field :create_user, type: :user do
-            arg :name, non_null(:string)
+            arg :username, non_null(:string)
             arg :email, non_null(:string)
             arg :password, non_null(:string)
             resolve &Chatter.UserResolver.create/2

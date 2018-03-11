@@ -1,11 +1,11 @@
 defmodule Chatter.Guardian do
-    use Guardian, otp_app: :my_app
+    use Guardian, otp_app: :chatter
     alias Chatter.Accounts
 
     def subject_for_token(user, _claims) do
         # You can use any value for the subject of your token but
-        # it should be useful in retrieving the user later, see
-        # how it being used on `user_from_claims/1` function.
+        # it should be useful in retrieving the resource later, see
+        # how it being used on `resource_from_claims/1` function.
         # A unique `id` is a good subject, a non-unique email address
         # is a poor subject.
         sub = to_string(user.id)
@@ -13,14 +13,14 @@ defmodule Chatter.Guardian do
     end
 
     def resource_from_claims(claims) do
-        # Here we'll look up our user from the claims, the subject can be
+        # Here we'll look up our resource from the claims, the subject can be
         # found in the `"sub"` key. In `above subject_for_token/2` we returned
-        # the user id so here we'll rely on that to look it up.
-        user = claims["sub"]
+        # the resource id so here we'll rely on that to look it up.
+        claims["sub"]
         |> Accounts.get_user
-        case user do
+        |> case do
             nil -> {:error, "User not found"}
-            _ -> {:ok, user}
+            user -> {:ok, user}
         end
     end
 end

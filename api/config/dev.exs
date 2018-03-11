@@ -44,3 +44,7 @@ config :chatter, Chatter.Repo,
   database: "chatter_dev",
   hostname: "localhost",
   pool_size: 10
+
+# Configures Guardian
+config :chatter, Chatter.Guardian,
+  secret_key: "LG17BzmhBeq81Yyyn6vH7GVdrCkQpLktol2vdXlBzkRRHpYsZwluKMG9r6fnu90m"

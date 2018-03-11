@@ -4,7 +4,11 @@ defmodule ChatterWeb.Schema.Types do
 
     object :user do
         field :id, :id
-        field :name, :string
+        field :username, :string
         field :email, :string
+    end
+
+    object :session do
+        field :token, :string
     end
 end

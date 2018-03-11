@@ -20,7 +20,8 @@ config :chatter, ChatterWeb.Endpoint,
 # Configures Guardian
 config :chatter, Chatter.Guardian,
   issuer: "chatter",
-  secret_key: "Tx5q2KUmvjseR14CEOoKUzsfq9/I4fVMwAPYWphXOj34k87kuKnfX6fcF6IOGAbN"
+  ttl: {30, :days},
+  verify_issuer: true
 
 # Configures Elixir's Logger
 config :logger, :console,
