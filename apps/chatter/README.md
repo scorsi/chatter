@@ -1,3 +1,0 @@
-# Chatter
-
-**TODO: Add description**
